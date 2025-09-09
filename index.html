@@ -394,15 +394,16 @@ function circleBounce(ball, cx,cy, r, bounce=RESTITUTION){
    ========================= */
 function makeBall(){
   return {
-    x: 710, // 右レーン内側に寄せる
-    y: 940,
-    vx: 0,
-    vy: -12, // 最初から上向きに少し速度
+    x: W/2,        // 画面中央
+    y: 100,        // 上のほう
+    vx: rand(-2,2),// 少しランダムに左右へ
+    vy: 4,         // 下向きに落ちる
     r: 13,
     trail: [],
     alive: true,
   };
 }
+
 
 }
 function makeBumper(x,y, r, word, hue){
@@ -556,9 +557,8 @@ function maybeSpawnBall(){
   game.spawnReady=false;
   setTimeout(()=>{
     game.balls.push(makeBall());
-    game.spawner.ready=false;
-    setTimeout(()=> game.spawner.ready=true, 600);
-  }, 400);
+    game.spawnReady=true;
+  }, 300); // 0.3秒後に上から落とす
 }
 
 /* =========================
@@ -968,18 +968,8 @@ update();
    ========================= */
 let lastSpace = 0;
 function handleLauncher(){
- if(keys.space && game.balls.length>0){
-  const b = game.balls[0];
-  if(b && b.x > 680 && b.y > 860){
-    b.vy = -18; // 強めに上へ
-    b.vx = -2;  // 左へ少し
-    AudioSys.beep(520, 0.06, 'square', 200);
-  }
+  // 上から出す仕様なので何もしない
 }
-
-  }
-}
-setInterval(handleLauncher, 30);
 
 /* =========================
    Auto-save guard
