@@ -394,12 +394,16 @@ function circleBounce(ball, cx,cy, r, bounce=RESTITUTION){
    ========================= */
 function makeBall(){
   return {
-    x: game.spawner.x, y: game.spawner.y,
-    vx: rand(-1,1)*0.5, vy: -10,
+    x: 710, // 右レーン内側に寄せる
+    y: 940,
+    vx: 0,
+    vy: -12, // 最初から上向きに少し速度
     r: 13,
     trail: [],
-    alive:true,
+    alive: true,
   };
+}
+
 }
 function makeBumper(x,y, r, word, hue){
   return {x,y,r, word, hue, lit:false, pulse:0};
@@ -435,8 +439,10 @@ function buildTable(){
   border.forEach(([x1,y1,x2,y2])=> game.walls.push({x1,y1,x2,y2, bounce:0.95}));
 
   // Gates near drain
-  game.walls.push({x1:80,y1:900,x2:300,y2:1030,bounce:0.9});
-  game.walls.push({x1:720,y1:900,x2:500,y2:1030,bounce:0.9});
+// 右側発射レーンの縦壁
+game.walls.push({x1:720, y1:1050, x2:720, y2:120, bounce:0.95});
+game.walls.push({x1:700, y1:1050, x2:700, y2:120, bounce:0.95});
+
 
   // Bumpers with words
   const words = game.allWords.slice();
@@ -962,17 +968,15 @@ update();
    ========================= */
 let lastSpace = 0;
 function handleLauncher(){
-  if(keys.space && game.balls.length>0){
-    const t = nowMs();
-    if(t - lastSpace > 200){
-      lastSpace = t;
-      // nudge upward if ball near plunger lane
-      const b = game.balls[0];
-      if(b && b.x>700 && b.y>880){
-        b.vy -= 12; b.vx -= 2;
-        AudioSys.beep(520, 0.06, 'square', 200);
-      }
-    }
+ if(keys.space && game.balls.length>0){
+  const b = game.balls[0];
+  if(b && b.x > 680 && b.y > 860){
+    b.vy = -18; // 強めに上へ
+    b.vx = -2;  // 左へ少し
+    AudioSys.beep(520, 0.06, 'square', 200);
+  }
+}
+
   }
 }
 setInterval(handleLauncher, 30);
