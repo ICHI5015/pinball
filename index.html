@@ -988,9 +988,31 @@ canvas.addEventListener('click', ()=>{
   if(game.timeLeft<=0) resetGame();
   game.running = true; uiState.textContent="PLAY";
   AudioSys.resume();
+  
 });
 
 })();
+
+  // 画面の80%以上を覆う固定/全画面要素を一括削除
+(function nukeOverlays(){
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const suspects = Array.from(document.querySelectorAll('*')).filter(el=>{
+    const st = getComputedStyle(el);
+    if (st.display === 'none' || st.visibility === 'hidden' || st.opacity === '0') return false;
+    const fixed = st.position === 'fixed' || st.position === 'sticky';
+    const full = (st.inset === '0px' || (st.top==='0px'&&st.left==='0px'&&st.right==='0px'&&st.bottom==='0px'));
+    const r = el.getBoundingClientRect();
+    const cover = (r.width*r.height) >= (vw*vh*0.8);
+    const hasBg = (st.backgroundColor && st.backgroundColor !== 'rgba(0, 0, 0, 0)');
+    const hasFilter = (st.backdropFilter !== 'none' || st.filter !== 'none');
+    return (fixed || full || cover) && (cover && (hasBg || hasFilter));
+  });
+  suspects.forEach(el => {
+    try { el.remove(); } catch(_) {}
+  });
+  console.log('[overlay killer] removed:', suspects.length, 'elements');
+})();
+
 </script>
 </body>
 </html>
